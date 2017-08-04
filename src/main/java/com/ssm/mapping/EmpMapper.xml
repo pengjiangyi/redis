@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ssm.dao.EmpMapper" >
+  <resultMap id="BaseResultMap" type="com.ssm.pojo.Emp" >
+    <id column="empId" property="empid" jdbcType="INTEGER" />
+    <result column="empName" property="empname" jdbcType="VARCHAR" />
+    <result column="depId" property="depid" jdbcType="INTEGER" />
+     <association property="dep" resultMap="com.ssm.dao.DepMapper.BaseResultMap"></association>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    empId, empName, depId
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from emp
+    where empId = #{empid,jdbcType=INTEGER}
+  </select>
+  
+   <select id="joinQuery2"  resultMap="BaseResultMap">
+        select * from Emp join Dep on Emp.depId=Dep.depId
+    </select>
+  
+  <select id="selectEmpByDepId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  	select * from Emp join Dep on Emp.depId=Dep.depId where Emp.depId=#{id}
+  </select>
+  
+  
+  <select id="findByName" parameterType="String" resultMap="BaseResultMap">
+  select * from emp where empName like"%"#{empname}"%"
+  </select>
+  
+  
+  <select id="requestQuery" parameterType="com.ssm.pojo.Emp" resultMap="BaseResultMap">
+  select * from emp where 1=1 
+  <if test="depId!=null">
+  and depId=#{depId}
+  </if>
+  <if test="empName!=null">
+  and empName=#{empName}
+  </if>
+  </select>
+  
+ 
+	<resultMap type="HashMap" id="tastmap">  
+    <result property="ID" column="id"/>  
+    <result property="NAME" column="name" /> <!-- 这里将clob类型直接转换为了String类型 -->  
+    <result property="COUNT" column="count"/>  
+</resultMap> 
+
+<select id="testSQL" resultType="HashMap">
+	
+select count(emp.depId) as COUNT,dep.depName AS NAME,emp.depId AS ID from dep,emp where dep.depId=emp.depId GROUP BY emp.depId
+</select>
+	
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from emp
+    where empId = #{empid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ssm.pojo.Emp" >
+    insert into emp (empId, empName, depId
+      )
+    values (#{empid,jdbcType=INTEGER}, #{empname,jdbcType=VARCHAR}, #{depid,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ssm.pojo.Emp" >
+    insert into emp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="empid != null" >
+        empId,
+      </if>
+      <if test="empname != null" >
+        empName,
+      </if>
+      <if test="depid != null" >
+        depId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="empid != null" >
+        #{empid,jdbcType=INTEGER},
+      </if>
+      <if test="empname != null" >
+        #{empname,jdbcType=VARCHAR},
+      </if>
+      <if test="depid != null" >
+        #{depid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ssm.pojo.Emp" >
+    update emp
+    <set >
+      <if test="empname != null" >
+        empName = #{empname,jdbcType=VARCHAR},
+      </if>
+      <if test="depid != null" >
+        depId = #{depid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where empId = #{empid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ssm.pojo.Emp" >
+    update emp
+    set empName = #{empname,jdbcType=VARCHAR},
+      depId = #{depid,jdbcType=INTEGER}
+    where empId = #{empid,jdbcType=INTEGER}
+  </update>
+</mapper>

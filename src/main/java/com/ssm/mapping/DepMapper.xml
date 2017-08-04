@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ssm.dao.DepMapper" >
+  <resultMap id="BaseResultMap" type="com.ssm.pojo.Dep" >
+    <id column="depId" property="depid" jdbcType="INTEGER" />
+    <result column="depName" property="depname" jdbcType="VARCHAR" />
+    <collection property="emps" ofType="com.ssm.pojo.Emp" column="depId">
+     <id column="empId" property="empid" jdbcType="INTEGER" />
+    <result column="empName" property="empname" jdbcType="VARCHAR" />
+    <result column="depId" property="depid" jdbcType="INTEGER" />
+    </collection>
+    
+  </resultMap>
+  <sql id="Base_Column_List" >
+    depId, depName
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select *
+    from dep,emp
+    where   dep.depId=emp.depId    and    dep.depId = #{depid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dep
+    where depId = #{depid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.ssm.pojo.Dep" >
+    insert into dep (depId, depName)
+    values (#{depid,jdbcType=INTEGER}, #{depname,jdbcType=VARCHAR})
+  </insert>
+  
+ 
+  
+  
+  
+  
+  <insert id="insertSelective" parameterType="com.ssm.pojo.Dep" >
+    insert into dep
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="depid != null" >
+        depId,
+      </if>
+      <if test="depname != null" >
+        depName,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="depid != null" >
+        #{depid,jdbcType=INTEGER},
+      </if>
+      <if test="depname != null" >
+        #{depname,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ssm.pojo.Dep" >
+    update dep
+    <set >
+      <if test="depname != null" >
+        depName = #{depname,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where depId = #{depid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ssm.pojo.Dep" >
+    update dep
+    set depName = #{depname,jdbcType=VARCHAR}
+    where depId = #{depid,jdbcType=INTEGER}
+  </update>
+</mapper>
